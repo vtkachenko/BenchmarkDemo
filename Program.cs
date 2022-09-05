@@ -4,15 +4,20 @@ using BenchmarkDotNet.Running;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Columns;
 
-namespace BechmarkDemo
+namespace BenchmarkDemo
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
             //var summary = BenchmarkRunner.Run<MemoryBenchmarkerDemo>();
-            BenchmarkRunner.Run<SleepVsDelayBenchmark>();
+            //BenchmarkRunner.Run<SleepVsDelayBenchmark>();
+            BenchmarkRunner.Run<ThreadStartVsThreadPoolQueueVsTaskRunBenchmark>(
+                DefaultConfig.Instance.AddColumn(StatisticColumn.P95)
+            );
         }
 
     }
