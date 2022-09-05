@@ -1,43 +1,60 @@
 ﻿using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Collections.Generic;
 
-internal class Program
+namespace BechmarkDemo
 {
-    private static void Main(string[] args)
+    internal class Program
     {
-        //var summary = BenchmarkRunner.Run<MemoryBenchmarkerDemo>();
+        private static void Main(string[] args)
+        {
+            //var summary = BenchmarkRunner.Run<MemoryBenchmarkerDemo>();
+            BenchmarkRunner.Run<SleepVsDelayBenchmark>();
+        }
 
-        int n = 17;
-        System.Console.WriteLine(Math.Log2(n));
-        System.Console.WriteLine(Math.Log2(n) % 1);
     }
 
-}
+    // https://www.youtube.com/watch?v=4kH4IFuDJG8&t=1679s
 
-[RankColumn]
-[MemoryDiagnoser]
-public class MemoryBenchmarkerDemo
-{
-    int NumberOfItems = 100_000;
-    [Benchmark]
-    public string ConcatStringsUsingStringBuilder()
+    public class SleepVsDelayBenchmark
     {
-        var sb = new StringBuilder();
-        for (int i = 0; i < NumberOfItems; i++)
-        {
-            sb.Append("Hello World!" + i);
-        }
-        return sb.ToString();
+        [Params(1, 5, 50)]
+        public int Duration;
+
+        [Benchmark]
+        public void ThreadSleep() => Thread.Sleep(Duration);
+
+        [Benchmark]
+        public Task TaskDelay() => Task.Delay(Duration);
     }
-    [Benchmark]
-    public string ConcatStringsUsingGenericList()
+
+    [RankColumn]
+    [MemoryDiagnoser]
+    public class MemoryBenchmarkerDemo
     {
-        var list = new List<string>(NumberOfItems);
-        for (int i = 0; i < NumberOfItems; i++)
+        int NumberOfItems = 100_000;
+        [Benchmark]
+        public string ConcatStringsUsingStringBuilder()
         {
-            list.Add("Hello World!" + i);
+            var sb = new StringBuilder();
+            for (int i = 0; i < NumberOfItems; i++)
+            {
+                sb.Append("Hello World!" + i);
+            }
+            return sb.ToString();
         }
-        return list.ToString();
+        [Benchmark]
+        public string ConcatStringsUsingGenericList()
+        {
+            var list = new List<string>(NumberOfItems);
+            for (int i = 0; i < NumberOfItems; i++)
+            {
+                list.Add("Hello World!" + i);
+            }
+            return list.ToString();
+        }
     }
 }
