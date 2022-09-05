@@ -7,7 +7,7 @@ namespace BenchmarkDemo
 {
     public class ThreadStartVsThreadPoolQueueVsTaskRunBenchmark
     {
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public void ThreadStart()
         {
             bool b = false;
